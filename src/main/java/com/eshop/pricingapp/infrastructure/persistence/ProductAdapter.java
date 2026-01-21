@@ -6,9 +6,13 @@ import com.eshop.pricingapp.infrastructure.persistence.repository.ProductReposit
 import com.eshop.pricingapp.ports.out.ProductOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,5 +24,23 @@ public class ProductAdapter implements ProductOutputPort {
 
     public List<Product> getAllProductPrices() {
         return productOutputMapper.toModel(productRepository.findAllProductPrices());
+    }
+
+    @Override
+    public Optional<Product> findProductPriceByDate(LocalDateTime applicationDate, Integer productId, Integer brandId) {
+        checkValues(applicationDate, productId, brandId);
+        return productRepository.findProductPriceByDate(applicationDate, productId, brandId)
+                .map(productOutputMapper::toModel);
+    }
+
+    private void checkValues(LocalDateTime applicationdate, Integer productId, Integer brandId) {
+        if (applicationdate == null || productId == null || brandId == null) {
+            log.info("applicationDate = {}, productId = {}, brandId = {} ", applicationdate, productId, brandId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Null values");
+        }
+        if (brandId < 1 || productId < 1) {
+            log.info("brandId value = {}, productId value = {}", brandId, productId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brand Id and product ID valuest must be above 0");
+        }
     }
 }

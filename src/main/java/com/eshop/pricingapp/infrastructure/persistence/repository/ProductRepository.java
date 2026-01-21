@@ -6,13 +6,14 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface ProductRepository {
 
-    @Select("SELECT brand_id, start_date, end_date, price_list, product_id, priority, curr, last_update, last_update_by " +
-            "FROM prices")
+    @Select("SELECT brand_id, start_date, end_date, price_list, product_id, priority, curr, last_update, last_update_by FROM prices")
     @Results(value = {
             @Result(property = "brandId", column = "brand_id"),
             @Result(property = "startDate", column = "start_date"),
@@ -26,4 +27,23 @@ public interface ProductRepository {
     })
     List<ProductEntity> findAllProductPrices();
 
+    @Select("""
+                SELECT product_id, brand_id, price, curr, start_date, end_date
+                FROM prices
+                WHERE product_id = #{productId}
+                  AND brand_id = #{brandId}
+                  AND #{applicationDate} BETWEEN start_date AND end_date
+                ORDER BY priority DESC
+                LIMIT 1
+            """)
+    @Results(value = {
+            @Result(property = "brandId", column = "brand_id"),
+            @Result(property = "startDate", column = "start_date"),
+            @Result(property = "endDate", column = "end_Date"),
+            @Result(property = "productId", column = "product_id"),
+            @Result(property = "priority", column = "priority"),
+            @Result(property = "price", column = "price"),
+            @Result(property = "currency", column = "curr"),
+    })
+    Optional<ProductEntity> findProductPriceByDate(LocalDateTime applicationDate, Integer productId, Integer brandId);
 }
