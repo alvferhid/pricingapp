@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS prices(
     priority INTEGER,
     price DECIMAL(10,2),
     curr VARCHAR(10),
+    last_update TIMESTAMP,
+    last_update_by VARCHAR,
     FOREIGN KEY (brand_id) REFERENCES brand (id),
     FOREIGN KEY (product_id) REFERENCES product (id)
 );
