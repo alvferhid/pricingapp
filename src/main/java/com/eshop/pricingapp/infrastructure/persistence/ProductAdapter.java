@@ -22,6 +22,8 @@ public class ProductAdapter implements ProductOutputPort {
     private final ProductOutputMapper productOutputMapper;
     private final ProductRepository productRepository;
 
+    private final int MINIMUM_VALUE = 1;
+
     public List<Product> getAllProductPrices() {
         return productOutputMapper.toModel(productRepository.findAllProductPrices());
     }
@@ -38,7 +40,7 @@ public class ProductAdapter implements ProductOutputPort {
             log.info("applicationDate = {}, productId = {}, brandId = {} ", applicationdate, productId, brandId);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Null values");
         }
-        if (brandId < 1 || productId < 1) {
+        if (brandId < MINIMUM_VALUE || productId < MINIMUM_VALUE) {
             log.info("brandId value = {}, productId value = {}", brandId, productId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brand Id and product ID valuest must be above 0");
         }
