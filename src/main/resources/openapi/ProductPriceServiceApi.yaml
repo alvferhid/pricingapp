@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Price Service Management API
+  description: API for retrieving product prices
+  version: '1.0'
+servers:
+  - url: http://localhost:8080
+paths:
+  /product/all:
+    get:
+      tags:
+        - prices
+      summary: Get all product
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: List of all products with prices
+          content:
+            application/json:
+              schema:
+                $ref: 'responses/GetAllProductPrices.yaml'
+        '400':
+          $ref: 'responses/error/ErrorStatus400Response.yaml'
+        '500':
+          $ref: 'responses/error/ErrorStatus500Response.yaml'
+  /product/offer/{applicationDate}/{productId}/{brandId}:
+    get:
+      tags:
+        - prices
+      summary: Get a product prices according to date, brand and product id
+      operationId: getProductPrice
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: brandId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Get the current price of the product at the specified date
+          content:
+            application/json:
+              schema:
+                $ref: 'responses/FindProductPriceByDate.yaml'
+        '400':
+          $ref: 'responses/error/ErrorStatus400Response.yaml'
+        '404':
+          $ref: 'responses/error/ErrorStatus404Response.yaml'
+        '500':
+          $ref: 'responses/error/ErrorStatus500Response.yaml'

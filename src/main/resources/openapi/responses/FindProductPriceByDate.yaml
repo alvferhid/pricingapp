@@ -1,0 +1,35 @@
+type: object
+properties:
+  brandId:
+    type: integer
+    description: "The ID of the brand."
+  startDate:
+    type: string
+    format: date-time
+    description: "The start date and time of the price validity."
+  endDate:
+    type: string
+    format: date-time
+    description: "The end date and time of the price validity."
+  priceList:
+    type: integer
+    description: "The ID of the price list."
+  productId:
+    type: integer
+    description: "The ID of the product."
+  price:
+    type: number
+    format: double
+    description: "The price of the product."
+  currency:
+    type: string
+    description: "The currency of the price."
+required:
+  - brandId
+  - startDate
+  - endDate
+  - priceList
+  - productId
+  - price
+  - currency
+description: "Contains the price details of a specific product."

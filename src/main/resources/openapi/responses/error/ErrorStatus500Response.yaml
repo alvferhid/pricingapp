@@ -1,0 +1,14 @@
+type: object
+properties:
+  error:
+    type: object
+    properties:
+      code:
+        type: integer
+        example: 500
+      message:
+        type: string
+        example: "Internal Server Error"
+      details:
+        type: string
+        example: "An unexpected error occurred on the server."

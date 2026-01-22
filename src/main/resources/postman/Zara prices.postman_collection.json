@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "dfa52c02-b09b-446b-9b5c-fbdf3a3e822e",
+		"name": "Zara prices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19923243"
+	},
+	"item": [
+		{
+			"name": "Get All Prices",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/price/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"price",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find product price by date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/price/offer/2020-02-14T10:00:00/35455/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"price",
+						"offer",
+						"2020-02-14T10:00:00",
+						"35455",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
