@@ -24,8 +24,8 @@ public class ProductAdapter implements ProductOutputPort {
 
     private final int MINIMUM_VALUE = 1;
 
-    public List<Product> getAllProductPrices() {
-        return productOutputMapper.toModel(productRepository.findAllProductPrices());
+    public List<Product> getAllProducts() {
+        return productOutputMapper.toModel(productRepository.findAllProducts());
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ProductInputPort {
 
-    List<Product> getAllProductPrices();
+    List<Product> getAllProducts();
 
     Optional<Product> findProductPriceByDate(LocalDateTime applicationDate, Integer productId, Integer brandId);
 }

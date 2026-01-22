@@ -25,8 +25,8 @@ public class ProductController {
     private final ProductInputMapper productInputMapper;
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductDto>> getAllProductPrices() {
-        return ResponseEntity.ok((productInputMapper.toDto(productInputPort.getAllProductPrices())));
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        return ResponseEntity.ok((productInputMapper.toDto(productInputPort.getAllProducts())));
     }
 
     @GetMapping("/offer/{applicationDate}/{productId}/{brandId}")

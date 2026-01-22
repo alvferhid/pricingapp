@@ -17,8 +17,8 @@ public class ProductService implements ProductInputPort {
     private final ProductOutputPort productOutputPort;
 
     @Override
-    public List<Product> getAllProductPrices() {
-        return productOutputPort.getAllProductPrices();
+    public List<Product> getAllProducts() {
+        return productOutputPort.getAllProducts();
     }
 
     @Override

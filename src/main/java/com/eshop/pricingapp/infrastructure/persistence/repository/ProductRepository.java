@@ -13,7 +13,7 @@ import java.util.Optional;
 @Mapper
 public interface ProductRepository {
 
-    @Select("SELECT brand_id, start_date, end_date, price_list, product_id, priority, curr, last_update, last_update_by FROM prices")
+    @Select("SELECT brand_id, start_date, end_date, price_list, product_id, priority, price, curr, last_update, last_update_by FROM prices")
     @Results(value = {
             @Result(property = "brandId", column = "brand_id"),
             @Result(property = "startDate", column = "start_date"),
@@ -21,11 +21,12 @@ public interface ProductRepository {
             @Result(property = "priceList", column = "price_list"),
             @Result(property = "productId", column = "product_id"),
             @Result(property = "priority", column = "priority"),
+            @Result(property = "price", column = "price"),
             @Result(property = "currency", column = "curr"),
             @Result(property = "lastUpdate", column = "last_update"),
             @Result(property = "lastUpdateBy", column = "last_update_by")
     })
-    List<ProductEntity> findAllProductPrices();
+    List<ProductEntity> findAllProducts();
 
     @Select("""
                 SELECT product_id, brand_id, price, curr, start_date, end_date
