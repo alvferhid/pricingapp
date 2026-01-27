@@ -168,7 +168,7 @@ yyyy-MM-dd'T'HH:mm:ss
 
 Price selection is handled in the domain layer:
 
-```java
+```
 .max(Comparator.comparingInt(Product::getPriority));
 ````
 This guarantees that when price ranges overlap, the correct price is always returned.
