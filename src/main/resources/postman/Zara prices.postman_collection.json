@@ -12,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/price/all",
+					"raw": "http://localhost:8080/product/all",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -32,7 +32,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/price/offer/2020-02-14T10:00:00/35455/1",
+					"raw": "http://localhost:8080/product/offer/2020-02-14T10:00:00/35455/1",
 					"protocol": "http",
 					"host": [
 						"localhost"

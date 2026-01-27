@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface ProductRepository {
@@ -29,13 +28,11 @@ public interface ProductRepository {
     List<ProductEntity> findAllProducts();
 
     @Select("""
-                SELECT product_id, brand_id, price, curr, start_date, end_date
+                SELECT product_id, brand_id, price, curr, start_date, end_date, priority
                 FROM prices
                 WHERE product_id = #{productId}
                   AND brand_id = #{brandId}
                   AND #{applicationDate} BETWEEN start_date AND end_date
-                ORDER BY priority DESC
-                LIMIT 1
             """)
     @Results(value = {
             @Result(property = "brandId", column = "brand_id"),
@@ -46,5 +43,5 @@ public interface ProductRepository {
             @Result(property = "price", column = "price"),
             @Result(property = "currency", column = "curr"),
     })
-    Optional<ProductEntity> findProductPriceByDate(LocalDateTime applicationDate, Integer productId, Integer brandId);
+    List<ProductEntity> findproductsByDate(LocalDateTime applicationDate, Integer productId, Integer brandId);
 }
