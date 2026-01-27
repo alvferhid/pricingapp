@@ -1,0 +1,189 @@
+# Pricing App
+
+Backend application developed in **Java with Spring Boot**, following a **Hexagonal Architecture (Ports & Adapters).
+The purpose of this application is to retrieve product prices based on **application date, product ID, and brand ID**,
+always returning the valid price with the **highest priority**.
+
+## Architecture
+
+The project is structured using **Hexagonal Architecture**, clearly separating responsibilities into:
+
+- REST Controllers (input layer)
+- Domain (business logic)
+- Input and Output Ports
+- Infrastructure (persistence, repositories, mappers)
+
+This architecture provides:
+- Low coupling
+- High testability
+- Easy replacement of infrastructure components
+
+## Technologies Used
+
+- Java 17
+- Spring Boot
+- MyBatis
+- Lombok
+- Maven
+- Relational Database (H2 / MySQL)
+
+---
+
+## Project Structure
+
+````
+com.eshop.pricingapp
+├── domain
+│   ├── model
+│   └── service
+├── ports
+│   ├── in
+│   └── out
+├── infrastructure
+│   ├── controller
+│   │   ├── advice
+│   │   │   └── ApiExceptionHandler
+│   │   └── exception
+│   │       ├── InvalidRequestException
+│   │       └── PriceNotFoundException
+│   ├── persistence
+│   │   ├── entity
+│   │   ├── mapper
+│   │   └── repository
+│   └── dto
+│       └── ApiError
+````
+
+## Available Endpoints
+
+### Get all products
+
+GET /product/all
+Returns a list of all products with their prices.
+
+[
+    {
+        "brandId": 1,
+        "startDate": "2020-06-14T00:00:00",
+        "endDate": "2020-12-31T23:59:59",
+        "priceList": 1,
+        "productId": 35455,
+        "price": 35.5,
+        "currency": "EUR",
+        "lastUpdate": "2020-03-26T14:49:07",
+        "lastUpdateBy": "user1"
+    },
+    {
+        "brandId": 1,
+        "startDate": "2020-06-14T15:00:00",
+        "endDate": "2020-06-14T18:30:00",
+        "priceList": 2,
+        "productId": 35455,
+        "price": 25.45,
+        "currency": "EUR",
+        "lastUpdate": "2020-05-26T15:38:22",
+        "lastUpdateBy": "user1"
+    }
+]
+
+### Get product price by date, product and brand
+
+GET /product/offer/{applicationDate}/{productId}/{brandId}
+Returns a single product according to the parameters. In case of multiple matching the one with more priority is taken.
+
+
+{
+    "brandId": 1,
+    "startDate": "2020-06-14T00:00:00",
+    "endDate": "2020-12-31T23:59:59",
+    "priceList": null,
+    "productId": 35455,
+    "price": 35.5,
+    "currency": "EUR",
+    "lastUpdate": null,
+    "lastUpdateBy": null
+}
+
+**Business rules applied:**
+
+- Prices are filtered by application date
+- If multiple prices are valid, the one with the highest priority is selected
+- If no valid price exists, a `404 NOT FOUND` response is returned
+
+## Error Handling
+
+The application uses a centralized exception handling mechanism implemented with @RestControllerAdvice.
+All errors are returned in a JSON format using the ApiError DTO.
+
+Global Exception Handler
+
+Errors are handled by the ApiExceptionHandler class, which maps domain and controller exceptions to proper HTTP responses.
+
+Invalid Request – 400 BAD REQUEST
+
+Thrown when request parameters are invalid (null values, IDs lower than 1, etc.).
+
+Exception:
+
+InvalidRequestException
+
+Response example:
+{
+  "code": "INVALID_INPUT",
+  "message": "productId must be greater than 0"
+}
+
+Price Not Found – 404 NOT FOUND
+
+Returned when no price exists for the given application date, product ID, and brand ID.
+
+Exception:
+
+PriceNotFoundException
+
+Response example:
+{
+  "code": "PRICE_NOT_FOUND",
+  "message": "No price found for product 35455 and brand 1 at 2020-06-14T10:00"
+}
+
+Invalid Date Format – 400 BAD REQUEST
+
+Returned when applicationDate does not follow the required ISO-8601 format.
+
+Handled exception:
+
+MethodArgumentTypeMismatchException
+
+Expected format:
+yyyy-MM-dd'T'HH:mm:ss
+
+{
+  "code": "INVALID_DATE_FORMAT",
+  "message": "applicationDate must follow ISO-8601 format"
+}
+
+
+## Core Business Logic
+
+Price selection is handled in the domain layer:
+
+```java
+.max(Comparator.comparingInt(Product::getPriority));
+````
+This guarantees that when price ranges overlap, the correct price is always returned.
+
+## How to Run the Project
+
+Clone the repository
+Import the project into IntelliJ IDEA
+Run the Spring Boot main application
+Use Postman or a browser to access the endpoints
+
+Author
+
+Made by Álvaro Fernández Hidalgo
+This project was developed as a backend exercise applying clean architecture principles and good design practices.
+
+
+
