@@ -2,6 +2,8 @@ package com.eshop.pricingapp.infrastructure.controller;
 
 import com.eshop.pricingapp.domain.mapper.ProductInputMapper;
 import com.eshop.pricingapp.domain.model.Product;
+import com.eshop.pricingapp.infrastructure.controller.exception.InvalidRequestException;
+import com.eshop.pricingapp.infrastructure.controller.exception.PriceNotFoundException;
 import com.eshop.pricingapp.infrastructure.dto.ProductDto;
 import com.eshop.pricingapp.ports.in.ProductInputPort;
 import org.junit.jupiter.api.DisplayName;
@@ -12,14 +14,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
@@ -81,19 +86,65 @@ class ProductControllerTest {
     @Test
     void givenIncorrectDateProductOrBrandReturnsNotFound() {
         //GIVEN
-        LocalDateTime date = LocalDateTime.of(2022, 10, 15, 10, 10, 10); // Utiliza una fecha que no coincida con los datos de prueba
+        LocalDateTime date = LocalDateTime.of(2022, 10, 15, 10, 10, 10);
         Integer productId = 2;
         Integer brandId = 2;
 
         //WHEN
         when(productInputPort.findProductPriceByDate(date, productId, brandId)).thenReturn(Optional.empty());
 
-        //THEN
-        ResponseEntity<ProductDto> result = controller.findProductPriceByDate(date, productId, brandId);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        // THEN
+        assertThatExceptionOfType(PriceNotFoundException.class)
+                .isThrownBy(() -> controller.findProductPriceByDate(date, productId, brandId))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    @DisplayName("Throws bad request error when brandId or productId are null")
+    @Test
+    void throwsBadRequestErrorWhenBrandIdOrProductIdAreNull() {
+        //GIVEN
+        LocalDateTime date = LocalDateTime.of(2022, 10, 15, 10, 10, 10);
+        Integer productId = null;
+        Integer brandId = 2;
+
+        //WHEN - THEN
+        assertThatExceptionOfType(InvalidRequestException.class)
+                .isThrownBy(() -> controller.findProductPriceByDate(date, productId, brandId))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(BAD_REQUEST);
+    }
+
+    @DisplayName("Throws bad request error when brandId is below 1")
+    @Test
+    void throwsBadRequestErrorWhenBrandIdOrBrandIsBellowOne() {
+        //GIVEN
+        LocalDateTime date = LocalDateTime.of(2022, 10, 15, 10, 10, 10);
+        Integer productId = 2;
+        Integer brandId = 0;
+
+        //WHEN - THEN
+        assertThatExceptionOfType(InvalidRequestException.class)
+                .isThrownBy(() -> controller.findProductPriceByDate(date, productId, brandId))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(BAD_REQUEST);
+    }
+
+    @DisplayName("Throws bad request error when productId is below 1")
+    @Test
+    void throwsBadRequestErrorWhenProductIdIsBelowOne() {
+        //GIVEN
+        LocalDateTime date = LocalDateTime.of(2022, 10, 15, 10, 10, 10);
+        Integer productId = 0;
+        Integer brandId = 2;
+
+        //WHEN - THEN
+        assertThatExceptionOfType(InvalidRequestException.class)
+                .isThrownBy(() -> controller.findProductPriceByDate(date, productId, brandId))
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(BAD_REQUEST);
+    }
+
 
     ProductDto generateDto() {
         return ProductDto.builder()

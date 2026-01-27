@@ -124,4 +124,37 @@ public class ProductPricesIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("When looking for non existing data returns not found")
+    void whenLookingForNonExisingDataReturnsNotFound() throws Exception {
+        //GIVEN
+        String invalidDate = "2029-06-16T21:00:00";
+        String productId = "2323";
+        String brandId = "2323";
+
+        //WHEN-THEN
+        mockMvc.perform(get("/product/offer/" + invalidDate + "/" + productId + "/" + brandId))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @DisplayName("When applicationDate has invalid format then returns BAD_REQUEST with error body")
+    void whenApplicationDateHasInvalidFormatThenReturnsBadRequest() throws Exception {
+
+        // GIVEN
+        String invalidDate = "2020-06-14-10:00:00"; // no ISO-8601
+        String productId = "35455";
+        String brandId = "1";
+
+        // WHEN - THEN
+        mockMvc.perform(get("/product/offer/" + invalidDate + "/" + productId + "/" + brandId))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_DATE_FORMAT"))
+                .andExpect(jsonPath("$.message")
+                        .value("applicationDate must follow ISO-8601 format"));
+    }
+
 }
